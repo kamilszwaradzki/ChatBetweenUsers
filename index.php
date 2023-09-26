@@ -31,6 +31,6 @@ switch ($request) {
             }
             break;
         }
-        exit('de hell??');
+        break;
 }
 ?>

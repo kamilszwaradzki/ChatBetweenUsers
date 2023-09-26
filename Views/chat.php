@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Chat</title>
+        <title>Czat</title>
         <style>
             #header-chat {
                 height: 10%;
@@ -62,11 +62,19 @@
                 font-size: large;
                 cursor: pointer;
             }
+            #logout-id {
+                position: fixed;
+                right: 10%;
+                top: 5%;
+            }
         </style>
     </head>
     <body>
         <?php
         session_start();
+        if (isset($_POST['logout'])) {
+            session_unset();
+        }
         if ($_SESSION['authenticated'] === true) {
             require_once 'Classes/User.php';
             $users = new User();
@@ -96,6 +104,7 @@
                 <button id="send-btn">Send</button>
             </div>
         </div>
+        <form method='POST'><input type='submit' value="Wyloguj się" name='logout' id='logout-id' /></form>
         <script>
             async function postJSON() {
                 try {

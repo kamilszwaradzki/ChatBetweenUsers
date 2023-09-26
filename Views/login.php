@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title></title>
+        <title>Logowanie</title>
     </head>
     <body>
         <?php
@@ -17,9 +17,9 @@
                 <legend>Logowanie:</legend>
                 <label for="email-id">Email</label>
                 <input type="email" id="email-id" name="email"required/>
-                <label for="pass-id">Password</label>
+                <label for="pass-id">Hasło</label>
                 <input type="password" id="pass-id" name="password" minlength="8" required/>
-                <input type="submit" name="send" value="Submit">
+                <input type="submit" name="send" value="Wyślij">
             </fieldset>
         </form>
     </body>
