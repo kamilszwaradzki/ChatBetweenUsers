@@ -3,6 +3,9 @@
         <meta charset="UTF-8">
         <title>Czat</title>
         <style>
+            body {
+                background: linear-gradient(to bottom, #9aced9, #addbd1, #d9ccc4);
+            }
             #header-chat {
                 height: 10%;
                 width: 90%;
@@ -15,25 +18,26 @@
                 height: 80%;
                 width: 90%;
                 background: lightgray;
-                display: grid;
-                grid-template-rows: max-content;
                 overflow-y: scroll;
             }
             .message_sender {
                 padding: 1em;
-                width: auto;
+                width: fit-content;
                 max-width: 60%;
                 background: aliceblue;
                 margin-right: auto;
                 margin-bottom: auto;
                 border-bottom-right-radius: 1em;
+                margin-top: 1em;
             }
             .message_recipient {
                 padding: 1em;
-                width: auto;
+                width: fit-content;
                 max-width: 60%;
                 text-align: end;
                 background: beige;
+                margin-top: 1em;
+                margin-bottom: 1em;
                 margin-left: auto;
                 margin-bottom: auto;
                 border-bottom-left-radius: 1em;
@@ -101,7 +105,7 @@
             <div id="message-body">
                 <textarea id="text-id"></textarea>
                 <input type="hidden" id="selected-recipient-id" value=""/>
-                <button id="send-btn">Send</button>
+                <button id="send-btn">Wyślij</button>
             </div>
         </div>
         <form method='POST'><input type='submit' value="Wyloguj się" name='logout' id='logout-id' /></form>

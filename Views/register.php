@@ -1,7 +1,34 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Rejstracja</title>
+        <style>
+            body {
+                background: linear-gradient(to bottom, #9aced9, #addbd1, #d9ccc4);
+            }
+            fieldset, #email-id, #pass-id {
+                border-radius: 10px;
+            }
+            fieldset {
+                display: flex;
+                flex-direction: column;
+                background: rgba(255,255,255,0.5);
+                font-size: large;
+                width: max-content;
+                margin-top: 10%;
+                margin-left: auto;
+                margin-right: auto;
+                font-size: large;
+            }
+            #email-id, #pass-id {
+                width: 20em;
+            }
+            input[type='submit'] {
+                width: fit-content;
+                margin-top:1em;
+            }
+        </style>
     </head>
     <body>
         <?php
