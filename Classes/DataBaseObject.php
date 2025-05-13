@@ -49,7 +49,7 @@ class DataBaseObject extends PDO {
     }
 
     public function getLastId() {
-        return intval($this->query("select max({$this->id_column}) from {$this->table};")->fetchColumn());
+        return intval($this->query("SELECT MAX({$this->id_column}) FROM {$this->table};")->fetchColumn());
     }
     protected function countAllTables() {
         $this->query("SHOW TABLES LIKE 'dbo_%'")->rowCount();

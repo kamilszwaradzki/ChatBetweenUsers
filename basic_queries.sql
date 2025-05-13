@@ -1,0 +1,20 @@
+CREATE DATABASE IF NOT EXISTS test_db;
+CREATE USER IF NOT EXISTS 'local_user'@'localhost' IDENTIFIED BY 'localUser890';
+GRANT ALL PRIVILEGES ON test_db.* TO 'local_user'@'localhost';
+FLUSH PRIVILEGES;
+USE test_db;
+CREATE TABLE IF NOT EXISTS CBU_users (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `email` VARCHAR(255) NOT NULL UNIQUE,
+    `password` VARCHAR(255) NOT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS CBU_messages (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `sender_id` INT NOT NULL,
+    `receiver_id` INT NOT NULL,
+    `message` TEXT NOT NULL,
+    `sent_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES CBU_users(id),
+    FOREIGN KEY (receiver_id) REFERENCES CBU_users(id)
+);

@@ -1,21 +1,20 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Czat</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
         <style>
             body {
                 background: linear-gradient(to bottom, #9aced9, #addbd1, #d9ccc4);
             }
             #header-chat {
-                height: 10%;
+                min-height: 10%;
                 width: 90%;
                 background: gray;
             }
-            #name {
-                padding: 1em;
-            }
             #chat-body {
-                height: 80%;
+                max-height: 65%;
                 width: 90%;
                 background: lightgray;
                 overflow-y: scroll;
@@ -45,17 +44,8 @@
             #message-body {
                 background: darkgray;
                 width: 90%;
-                align-items: baseline;
+                align-items: center;
                 display: flex;
-            }
-            #text-id {
-                width: inherit;
-                margin: 1em;
-            }
-            #send-btn {
-                margin: auto 0 auto 0;
-                padding: 0.5em;
-                font-size: initial;
             }
             #users-list {
                 float:left;
@@ -66,49 +56,80 @@
                 font-size: large;
                 cursor: pointer;
             }
-            #logout-id {
-                position: fixed;
-                right: 10%;
-                top: 5%;
-            }
         </style>
     </head>
     <body>
-        <?php
+    <?php
         session_start();
         if (isset($_POST['logout'])) {
             session_unset();
         }
-        if ($_SESSION['authenticated'] === true) {
-            require_once 'Classes/User.php';
-            $users = new User();
-            echo '<h1>Użytkownicy</h1>';
-            echo '<input type="hidden" id="current-user-id" value="' . $_SESSION['current_user'] . '"/>';
-            echo '<ul id="users-list">';
-            foreach ($users->getAllUsers() as $user){
-                echo '<li class="user">' . $user['email'] . '<input type="hidden" value="' . $user['id'] . '"/></li>';
-            }
-            echo '</ul>';
-        } else {
+        if (empty($_SESSION['authenticated']) || $_SESSION['authenticated'] !== true) {
             header('Location: /login');
             return;
         }
-        ?>
-        <div style="float:right; width:88%; height: 80%;">
-            <div id="header-chat">
-                <div id="name">Nazwa odbiorcy</div>
+    ?>
+        <div class="container text-center">
+            <div class="row mb-3">
+                <div class="col text-start d-none d-md-block">
+                    <h1>ChatBetweenUsers</h1>
+                </div>
+                <div class="col text-center">
+                    <h5>Zalogowany jako:</h5>
+                    <h7 id="current-user-name" class="bg-light p-2 rounded-pill"><?php echo $_SESSION['current_user_name']; ?></h7>
+                </div>
+                <div class="col text-end">
+                    <input type="hidden" id="current-user-id" value="<?php echo $_SESSION['current_user']; ?>"/>
+                    <form method='POST' class="my-2"><input type='submit' value="Wyloguj się" name='logout' id='logout-id' class="btn btn-secondary"/></form>
+                </div>
             </div>
-            <div id="chat-body">
-                <div class="message_sender">Wiadomość Nadawcy</div>
-                <div class="message_recipient">Wiadomość Odbiorcy</div>
-            </div>
-            <div id="message-body">
-                <textarea id="text-id"></textarea>
-                <input type="hidden" id="selected-recipient-id" value=""/>
-                <button id="send-btn">Wyślij</button>
+            <div class="row h-75">
+                <div class="col-3">
+                    <?php
+                        require_once 'Classes/User.php';
+                        $users = new User();
+                        echo '<div class="list-group">';
+                        echo '<h6 class="list-group-item dropdown-header">Użytkownicy</h6>';
+                        foreach ($users->getAllUsers() as $user){
+                            echo '<a class="list-group-item list-group-item-action user text-break">' . $user['email'] . '<input type="hidden" value="' . $user['id'] . '"/></a>';
+                        }
+                        echo '</div>';
+                    ?>
+                </div>
+                <div class="col-9">
+                    <div class="row justify-content-center" id="header-chat">
+                        <ul class="nav nav-tabs" id="chatRoomTabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="#" id="name">Nazwa odbiorcy</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="row" id="chat-body">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-4 message_sender">Wiadomość Nadawcy</div>
+                                <div class="col-8"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-8"></div>
+                                <div class="col-4 message_recipient">Wiadomość Odbiorcy</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="message-body">
+                        <div class="col">
+                            <div class="input-group my-3">
+                                <input type="text" id="text-id" class="form-control">
+                                <div class="input-group-text">
+                                    <input type="hidden" id="selected-recipient-id" value=""/>
+                                    <button id="send-btn" class="btn">Wyślij</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <form method='POST'><input type='submit' value="Wyloguj się" name='logout' id='logout-id' /></form>
         <script>
             async function postJSON() {
                 try {
@@ -124,8 +145,10 @@
                   });
                   const result = await response.json();
                   console.log("Success:", result);
-                  let messages_content = '';
-                  messages_content += '<div class="message_sender">' + message + '</div>';
+                  let messages_content = '<div class="row">';
+                  messages_content += '<div class="col-4 message_sender">' + message + '</div>';
+                  messages_content += '<div class="col-8"></div>';
+                  messages_content += '</div>';
                   document.getElementById('chat-body').innerHTML += messages_content;
                 } catch (error) {
                   console.error("Error:", error);
@@ -134,8 +157,38 @@
             async function getJSON(e) {
                 try {
                   let sender = document.getElementById('current-user-id').value;
-                  let recipient = e.target.children.item(0).value;
-                  document.getElementById('name').innerText =  e.target.innerText;
+                  
+                  let recipient = '';
+                  if(e.target.children.length > 0) {
+                    recipient = e.target.children.item(0).value;
+                  } else if(e.target.hasAttribute('href')) {
+                    recipient = e.target.attributes['href'].value.replace('#','');
+                  }
+                  let userIdElems = document.getElementsByClassName('userIdClass');
+                  let userIds = new Array();
+                  for(const x of Array(userIdElems.length).keys()) {
+                    userIds.push(userIdElems.item(x).value);
+                  }
+                  if(!userIds.includes(recipient)) {
+                    const liNavItemUser = document.createElement("li");
+                    liNavItemUser.className = 'nav-item';
+                    const aNavLink = document.createElement("a");
+                    aNavLink.className = 'nav-link text-light';
+                    aNavLink.setAttribute('aria-current', 'page');
+                    aNavLink.setAttribute('href', '#' + recipient);
+                    aNavLink.innerText = e.target.innerText;
+                    const inputUserId = document.createElement("input");
+                    inputUserId.className = 'userIdClass';
+                    inputUserId.setAttribute('type', 'hidden');
+                    inputUserId.setAttribute('value', recipient);
+                    inputUserId.setAttribute('name', "recipientId[" + recipient + "]");
+                    liNavItemUser.appendChild(aNavLink);
+                    liNavItemUser.appendChild(inputUserId);
+                    document.getElementById('chatRoomTabs').appendChild(liNavItemUser);
+                  }
+                  if(document.getElementById('name') != null) {
+                    document.getElementById('name').closest("li").remove();
+                  }
                   document.getElementById('selected-recipient-id').value = recipient;
                   const response = await fetch("/message/" + sender + "/" + recipient, {
                     method: "GET",
@@ -146,16 +199,50 @@
 
                   const result = await response.json();
                   console.log("Success:", result);
-                  let messages_content = '';
+                  let messages_content = '<div class="col">';
                   result.forEach((item)=> {
-                      messages_content += '<div class="' + ( item.sender == sender ? 'message_sender' : 'message_recipient') + '">';
-                      messages_content += item.message + '</div>';
+                    messages_content += '<div class="row">';
+                    if (item.sender_id == sender) {
+                        messages_content += '<div class="col-4 message_sender">' + item.message + '</div>';
+                        messages_content += '<div class="col-8"></div>';
+                    } else {
+                        messages_content += '<div class="col-8"></div>';
+                        messages_content += '<div class="col-4 message_recipient">' + item.message + '</div>';
+                    }
+                    messages_content += '</div>';
                   });
+                  messages_content += '</div>';
                   document.getElementById('chat-body').innerHTML = messages_content;
+                  const tabs = document.querySelectorAll('.nav-link');
+                  for(let tab of tabs) {
+                    var uIdCl = tab.closest('li').querySelector('.userIdClass');  
+                    if (uIdCl.value == recipient) { tab.className = 'nav-link active'; }
+                    else { tab.className = 'nav-link text-light'; }
+                  }
                 } catch (error) {
                   console.error("Error:", error);
                 }
             }
+
+            const observer = new MutationObserver(() => {
+                for(let tab of document.querySelectorAll('.nav-link')) {
+                    tab.addEventListener('click', (e) => {
+                        if (localStorage.getItem('myInterval')) {
+                            var myI = localStorage.getItem('myInterval');
+                            clearInterval(myI);
+                        }
+                        getJSON(e);
+                        const myInterval = setInterval(async () => getJSON(e), 5000);
+                        localStorage.setItem("myInterval", myInterval);
+                    });
+                }
+            });
+
+            observer.observe(document.querySelector("#chatRoomTabs"), {
+                subtree: true,
+                childList: true,
+            });
+
             for (let item of document.getElementsByClassName('user')) {
                 item.addEventListener('click', (e) => {
                     if (localStorage.getItem('myInterval')) {

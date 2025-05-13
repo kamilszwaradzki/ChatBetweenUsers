@@ -43,6 +43,7 @@ class AuthAction implements AuthenticationInterface {
         if ($user_id > 0) {
             $_SESSION['authenticated'] = true;
             $_SESSION['current_user'] = $user_id;
+            $_SESSION['current_user_name'] = $credentials['email'];
             header('Location: /chat'); 
             return true;
         } else {
