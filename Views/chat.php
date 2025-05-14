@@ -6,7 +6,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
         <style>
             body {
-                background: linear-gradient(to bottom, #9aced9, #addbd1, #d9ccc4);
+                background: linear-gradient(0.75turn, #9aced9, #addbd1, #d9ccc4);
             }
             #header-chat {
                 min-height: 10%;
@@ -18,6 +18,7 @@
                 width: 90%;
                 background: lightgray;
                 overflow-y: scroll;
+                min-height: 30%;
             }
             .message_sender {
                 padding: 1em;
@@ -69,18 +70,28 @@
             return;
         }
     ?>
-        <div class="container text-center">
+        <div class="container-fluid text-center">
             <div class="row mb-3">
                 <div class="col text-start d-none d-md-block">
-                    <h1>ChatBetweenUsers</h1>
+                    <span class="badge my-2 fs-2 text-bg-secondary">ChatBetweenUsers</span>
                 </div>
                 <div class="col text-center">
-                    <h5>Zalogowany jako:</h5>
-                    <h7 id="current-user-name" class="bg-light p-2 rounded-pill"><?php echo $_SESSION['current_user_name']; ?></h7>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="badge fs-3 text-reset fw-normal">Zalogowany jako:</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div id="current-user-name" class="badge text-reset fw-normal bg-light fs-4 p-3 rounded-pill"><?php echo $_SESSION['current_user_name']; ?></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col text-end">
                     <input type="hidden" id="current-user-id" value="<?php echo $_SESSION['current_user']; ?>"/>
-                    <form method='POST' class="my-2"><input type='submit' value="Wyloguj się" name='logout' id='logout-id' class="btn btn-secondary"/></form>
+                    <form method='POST' class="my-2"><input type='submit' value="Wyloguj się" name='logout' id='logout-id' class="btn btn-lg btn-secondary"/></form>
                 </div>
             </div>
             <div class="row h-75">
@@ -89,30 +100,30 @@
                         require_once 'Classes/User.php';
                         $users = new User();
                         echo '<div class="list-group">';
-                        echo '<h6 class="list-group-item dropdown-header">Użytkownicy</h6>';
+                        echo '<div class="list-group-item dropdown-header fs-4">Użytkownicy</div>';
                         foreach ($users->getAllUsers() as $user){
-                            echo '<a class="list-group-item list-group-item-action user text-break">' . $user['email'] . '<input type="hidden" value="' . $user['id'] . '"/></a>';
+                            echo '<a class="list-group-item list-group-item-action user text-break fs-5">' . $user['email'] . '<input type="hidden" value="' . $user['id'] . '"/></a>';
                         }
                         echo '</div>';
                     ?>
                 </div>
                 <div class="col-9">
-                    <div class="row justify-content-center" id="header-chat">
+                    <div class="row justify-content-center rounded-top-3" id="header-chat">
                         <ul class="nav nav-tabs" id="chatRoomTabs">
                             <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#" id="name">Nazwa odbiorcy</a>
+                                <a class="nav-link active fs-5" aria-current="page" href="#" id="name">Nazwa odbiorcy</a>
                             </li>
                         </ul>
                     </div>
                     <div class="row" id="chat-body">
                         <div class="col">
                             <div class="row">
-                                <div class="col-4 message_sender">Wiadomość Nadawcy</div>
+                                <div class="col-4 message_sender fs-5">Wiadomość Nadawcy</div>
                                 <div class="col-8"></div>
                             </div>
                             <div class="row">
                                 <div class="col-8"></div>
-                                <div class="col-4 message_recipient">Wiadomość Odbiorcy</div>
+                                <div class="col-4 message_recipient fs-5">Wiadomość Odbiorcy</div>
                             </div>
                         </div>
                     </div>
@@ -146,7 +157,7 @@
                   const result = await response.json();
                   console.log("Success:", result);
                   let messages_content = '<div class="row">';
-                  messages_content += '<div class="col-4 message_sender">' + message + '</div>';
+                  messages_content += '<div class="col-4 message_sender fs-5">' + message + '</div>';
                   messages_content += '<div class="col-8"></div>';
                   messages_content += '</div>';
                   document.getElementById('chat-body').innerHTML += messages_content;
@@ -173,7 +184,7 @@
                     const liNavItemUser = document.createElement("li");
                     liNavItemUser.className = 'nav-item';
                     const aNavLink = document.createElement("a");
-                    aNavLink.className = 'nav-link text-light';
+                    aNavLink.className = 'nav-link text-light fs-5';
                     aNavLink.setAttribute('aria-current', 'page');
                     aNavLink.setAttribute('href', '#' + recipient);
                     aNavLink.innerText = e.target.innerText;
@@ -203,11 +214,11 @@
                   result.forEach((item)=> {
                     messages_content += '<div class="row">';
                     if (item.sender_id == sender) {
-                        messages_content += '<div class="col-4 message_sender">' + item.message + '</div>';
+                        messages_content += '<div class="col-4 message_sender fs-5">' + item.message + '</div>';
                         messages_content += '<div class="col-8"></div>';
                     } else {
                         messages_content += '<div class="col-8"></div>';
-                        messages_content += '<div class="col-4 message_recipient">' + item.message + '</div>';
+                        messages_content += '<div class="col-4 message_recipient fs-5">' + item.message + '</div>';
                     }
                     messages_content += '</div>';
                   });
@@ -215,9 +226,9 @@
                   document.getElementById('chat-body').innerHTML = messages_content;
                   const tabs = document.querySelectorAll('.nav-link');
                   for(let tab of tabs) {
-                    var uIdCl = tab.closest('li').querySelector('.userIdClass');  
-                    if (uIdCl.value == recipient) { tab.className = 'nav-link active'; }
-                    else { tab.className = 'nav-link text-light'; }
+                    var uIdCl = tab.closest('li').querySelector('.userIdClass');
+                    if (uIdCl.value == recipient) { tab.className = 'nav-link active fs-5'; }
+                    else { tab.className = 'nav-link text-light fs-5'; }
                   }
                 } catch (error) {
                   console.error("Error:", error);
